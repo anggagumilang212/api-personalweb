@@ -21,6 +21,9 @@ class ProjectResource extends JsonResource
             'foto' => $this->foto,
             'deskripsi' => $this->deskripsi,
             'image_url' => $this->image_url,
+            'slug' => $this->slug,
+            'url' => $this->url,
+            'author' => $this->author,
             Carbon::parse($this->created_at)->format('d-m-Y H:i:s'),
             Carbon::parse($this->updated_at)->format('d-m-Y'),
         ];
