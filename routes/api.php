@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,3 +29,8 @@ Route::delete('/delete-projects/{id}', [ProjectController::class, 'destroy']);
 
 //auhtor
 Route::get('/authors', [AuthorController::class, 'index']);
+//project
+Route::get('/products', [ProductController::class, 'index']);
+Route::post('/create-products', [ProductController::class, 'store']);
+Route::put('/update-products/{id}', [ProductController::class, 'update']);
+Route::delete('/delete-products/{id}', [ProductController::class, 'destroy']);
