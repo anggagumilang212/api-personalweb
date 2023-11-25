@@ -38,7 +38,7 @@ class ProjectController extends Controller
         ]);
         $imageName = time() . '_' . $request->file('foto')->getClientOriginalName();
         $request->foto->move(public_path('fotoproject/'), $imageName);
-        $imageUrl = URL::to('/core/public/fotoproject/' . $imageName);
+        $imageUrl = URL::to('/fotoproject/' . $imageName);
         $project = Project::create(
             [
                 'judul' => $request->judul,
