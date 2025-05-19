@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('url');
             $table->bigInteger('author_id');
             $table->string('image_url');
-            $table->string('stack');
+            $table->json('tech')->nullable();
             $table->string('slug');
             $table->timestamps();
         });

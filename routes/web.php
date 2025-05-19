@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProjectViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/projects', [ProjectViewController::class, 'index'])->name('projects.index');
+Route::post('/projects', [ProjectViewController::class, 'store'])->name('projects.store');
+Route::post('/projects/{id}', [ProjectViewController::class, 'update'])->name('projects.update');
+Route::delete('/projects/{id}', [ProjectViewController::class, 'destroy'])->name('projects.destroy');

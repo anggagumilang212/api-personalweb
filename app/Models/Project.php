@@ -17,6 +17,7 @@ class Project extends Model
         'slug',
         'foto',
         'image_url',
+        'tech',
     ];
 
     public function author()
