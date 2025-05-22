@@ -15,9 +15,8 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $project = Project::all();
+        $project = Project::orderBy('created_at', 'desc')->get();
         return ProjectResource::collection($project)->additional(['message' => 'Data projects successfully']);
-
     }
 
     public function detail($id)
@@ -107,5 +106,4 @@ class ProjectController extends Controller
         $project->delete();
         return (new ProjectDetailResource($project))->additional(['message' => 'Data deleted successfully']);
     }
-
 }
