@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\Api\BlogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,17 +21,26 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-//project
+
+// Projects
 Route::get('/projects', [ProjectController::class, 'index']);
 Route::get('/projects/{id}', [ProjectController::class, 'detail']);
 Route::post('/create-projects', [ProjectController::class, 'store']);
 Route::put('/update-projects/{id}', [ProjectController::class, 'update']);
 Route::delete('/delete-projects/{id}', [ProjectController::class, 'destroy']);
 
-//auhtor
+// Authors
 Route::get('/authors', [AuthorController::class, 'index']);
-//project
+
+// Products
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/create-products', [ProductController::class, 'store']);
 Route::put('/update-products/{id}', [ProductController::class, 'update']);
 Route::delete('/delete-products/{id}', [ProductController::class, 'destroy']);
+
+// Blogs
+Route::get('/blogs', [BlogController::class, 'index']);
+Route::get('/blogs/{id}', [BlogController::class, 'detail']);
+Route::post('/create-blogs', [BlogController::class, 'store']);
+Route::put('/update-blogs/{id}', [BlogController::class, 'update']);
+Route::delete('/delete-blogs/{id}', [BlogController::class, 'destroy']);
