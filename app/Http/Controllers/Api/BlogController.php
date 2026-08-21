@@ -13,6 +13,26 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
+    public function show($id)
+    {
+        $blog = \App\Models\Blog::find($id);
+        if (!$blog) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+        
+        // Add required user object for frontend SEO metadata
+        $blog->user = [
+            'name' => 'Angga Gumilang',
+            'username' => 'anggagumilang212',
+            'profile_image' => 'https://res.cloudinary.com/dnlrqdzbv/image/upload/c_crop,ar_1:1/v1770018519/me2_yaijiu.png'
+        ];
+        
+        // Add fake body_html for ReaderPage
+        $blog->body_html = '<p>' . nl2br(e($blog->body_markdown)) . '</p>';
+
+        return response()->json($blog);
+    }
+
     /**
      * GET /api/blogs
      */
