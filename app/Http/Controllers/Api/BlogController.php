@@ -45,9 +45,12 @@ class BlogController extends Controller
     /**
      * GET /api/blogs/{id}
      */
-    public function detail($id)
+    public function detail($identifier)
     {
-        $blog = Blog::find($id);
+        $blog = Blog::where('id', $identifier)
+                    ->orWhere('slug', $identifier)
+                    ->first();
+                    
         if (!$blog) {
             return response()->json(['message' => 'Blog not found'], 404);
         }
