@@ -633,12 +633,159 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 3px; }
 
         /* ══════════════════════════════════════
-           RESPONSIVE
+           MOBILE TOPBAR
         ══════════════════════════════════════ */
-        @media (max-width: 700px) {
-            .sidebar { transform: translateX(-100%); }
-            .main { margin-left: 0; padding: 20px 16px 60px; max-width: 100vw; }
+        .mob-topbar {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            background: rgba(8,8,18,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--c-border);
+            z-index: 200;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .mob-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+            color: var(--c-txt);
+        }
+
+        .mob-brand-ico {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--c-purple), var(--c-cyan));
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; color: #fff;
+            box-shadow: 0 3px 10px rgba(139,92,246,.4);
+        }
+
+        .mob-brand-name {
+            font-size: .9rem; font-weight: 800;
+            background: linear-gradient(135deg, #fff 40%, var(--c-purple-l));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mob-ham {
+            width: 38px; height: 38px;
+            border-radius: var(--r-xs);
+            background: rgba(255,255,255,.06);
+            border: 1px solid var(--c-border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--c-txt-2);
+            font-size: .9rem;
+            transition: all .2s;
+        }
+
+        .mob-ham:hover {
+            background: rgba(139,92,246,.15);
+            border-color: rgba(139,92,246,.3);
+            color: var(--c-purple-l);
+        }
+
+        /* Sidebar overlay backdrop */
+        .sb-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99;
+        }
+
+        .sb-overlay.open { display: block; }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE — LARGE TABLET (≤1024px)
+        ══════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            :root { --sidebar: 220px; }
+        }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE — TABLET (≤768px)
+        ══════════════════════════════════════ */
+        @media (max-width: 768px) {
+            /* Show mobile topbar */
+            .mob-topbar { display: flex; }
+
+            /* Sidebar becomes a drawer */
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .3s cubic-bezier(.4,0,.2,1);
+                z-index: 150;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            /* Main shifts down for topbar */
+            .main {
+                margin-left: 0;
+                padding: 72px 16px 80px;
+                max-width: 100vw;
+            }
+
+            /* Forms: single column */
             .form-grid { grid-template-columns: 1fr; }
+
+            /* Search bar: full width */
+            .search-wrap input { width: 100% !important; }
+            .search-wrap { width: 100%; }
+
+            /* card-head stacks on small */
+            .card-head {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Buttons smaller */
+            .btn { font-size: .78rem; padding: 8px 16px; }
+            .btn-sm { font-size: .72rem; padding: 5px 11px; }
+
+            /* Toast: smaller, full-width-ish */
+            .toast { min-width: 240px; }
+            .toast-stack { right: 12px; top: 68px; }
+
+            /* Modal full-width on mobile */
+            .modal-box { padding: 24px 20px; }
+        }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE — MOBILE (≤480px)
+        ══════════════════════════════════════ */
+        @media (max-width: 480px) {
+            .main { padding: 68px 12px 80px; }
+
+            /* Stat boxes: single column */
+            .stats-1col { grid-template-columns: 1fr !important; }
+
+            /* Hide stat icons on very small */
+            .stat-icon { display: none; }
+
+            /* Card body padding */
+            .card-body { padding: 16px; }
+            .card-head { padding: 14px 16px; }
+
+            /* Bigger tap targets */
+            .btn-ico { width: 38px; height: 38px; }
+
+            /* Slug truncate more aggressively */
+            .card-slug { max-width: 110px; }
+
+            /* Toast compact */
+            .toast { min-width: 0; width: calc(100vw - 24px); }
+            .toast-stack { left: 12px; right: 12px; }
         }
 
         /* ══════════════════════════════════════
@@ -649,10 +796,24 @@
 </head>
 <body>
 
+<!-- ═══════════ MOBILE TOPBAR ═══════════ -->
+<div class="mob-topbar">
+    <a href="/" class="mob-brand">
+        <div class="mob-brand-ico"><i class="fas fa-layer-group"></i></div>
+        <span class="mob-brand-name">Admin Panel</span>
+    </a>
+    <button class="mob-ham" id="mobHam" onclick="toggleSidebar()" aria-label="Toggle menu">
+        <i class="fas fa-bars" id="hamIco"></i>
+    </button>
+</div>
+
+<!-- ═══════════ SIDEBAR OVERLAY ═══════════ -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
 <!-- ═══════════ SIDEBAR ═══════════ -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="sb-brand">
-        <a href="/" class="sb-logo">
+        <a href="/" class="sb-logo" onclick="closeSidebar()">
             <div class="sb-logo-icon"><i class="fas fa-layer-group"></i></div>
             <span class="sb-logo-name">Admin Panel</span>
         </a>
@@ -707,6 +868,13 @@
         </div>
     </div>
 </aside>
+
+<!-- close sidebar on nav link click (mobile) -->
+<script>
+    document.querySelectorAll('.sb-link').forEach(l => {
+        l.addEventListener('click', () => { if (window.innerWidth <= 768) closeSidebar(); });
+    });
+</script>
 
 <!-- ═══════════ MAIN CONTENT ═══════════ -->
 <main class="main">
@@ -800,6 +968,32 @@
     }
 
     function closeDel() { document.getElementById('delOverlay').classList.remove('open'); }
+
+    /* ── Mobile Sidebar Toggle ── */
+    function toggleSidebar() {
+        const sb  = document.getElementById('sidebar');
+        const ov  = document.getElementById('sbOverlay');
+        const ico = document.getElementById('hamIco');
+        const open = sb.classList.toggle('open');
+        ov.classList.toggle('open', open);
+        ico.className = open ? 'fas fa-xmark' : 'fas fa-bars';
+        document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    function closeSidebar() {
+        const sb  = document.getElementById('sidebar');
+        const ov  = document.getElementById('sbOverlay');
+        const ico = document.getElementById('hamIco');
+        sb.classList.remove('open');
+        ov.classList.remove('open');
+        ico.className = 'fas fa-bars';
+        document.body.style.overflow = '';
+    }
+
+    /* Close sidebar on resize to desktop */
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeSidebar();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         const overlay = document.getElementById('delOverlay');

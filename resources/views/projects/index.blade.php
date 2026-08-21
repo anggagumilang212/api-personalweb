@@ -134,7 +134,26 @@
     .edit-slide { background: rgba(6,182,212,.03); }
     .einput:focus, .etextarea:focus { border-color: var(--c-cyan); background: rgba(6,182,212,.05); }
 
-    @media (max-width: 580px) { .stats-row { grid-template-columns: 1fr; } .project-grid { grid-template-columns: 1fr; } }
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        .page-header { flex-direction: column; gap: 14px; align-items: flex-start; }
+        .page-header h1 { font-size: 1.6rem; }
+        .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+        .project-grid { grid-template-columns: 1fr; }
+        .card-head { flex-direction: column; align-items: flex-start; }
+        .search-wrap { width: 100%; }
+        .search-wrap input { width: 100% !important; }
+    }
+
+    @media (max-width: 480px) {
+        .stats-row { grid-template-columns: 1fr; }
+        .page-header h1 { font-size: 1.4rem; }
+        .card-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
+        .card-footer > div { width: 100%; display: flex; gap: 8px; }
+        .card-footer .btn-ghost { width: 100%; justify-content: center; }
+        .thumb-row { flex-direction: column; align-items: flex-start; }
+        .drop-zone { padding: 18px 12px; }
+    }
 </style>
 @endsection
 
