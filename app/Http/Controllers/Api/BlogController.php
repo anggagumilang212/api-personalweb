@@ -54,6 +54,7 @@ class BlogController extends Controller
         if (!$blog) {
             return response()->json(['message' => 'Blog not found'], 404);
         }
+        $blog->increment('page_views_count');
         return (new BlogResource($blog))->additional(['message' => 'Blog detail fetched successfully']);
     }
 

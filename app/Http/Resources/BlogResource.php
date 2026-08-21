@@ -27,6 +27,7 @@ class BlogResource extends JsonResource
                 ? url('cover_images/' . $this->cover_image)
                 : null,
             'comments_count' => $this->comments_count,
+            'page_views_count' => $this->page_views_count,
             'published_at'   => $this->published_at
                 ? Carbon::parse($this->published_at)->toIso8601String()
                 : null,
