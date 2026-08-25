@@ -855,6 +855,17 @@
             @endif
         </a>
 
+        <a href="{{ route('resumes.index') }}" class="sb-link {{ request()->is('resumes') ? 'active' : '' }}">
+            <span class="sb-ico"><i class="fas fa-file-pdf"></i></span>
+            CV / Resume
+            @php $activeResume = \App\Models\Resume::where('is_active', true)->first(); @endphp
+            @if ($activeResume)
+                <span class="sb-badge" style="background:rgba(16,185,129,.2);color:#34d399;border:1px solid rgba(16,185,129,.3);">
+                    <i class="fas fa-check" style="font-size:.55rem;"></i>
+                </span>
+            @endif
+        </a>
+
         <div class="sb-section">REST API</div>
 
         <a href="/api/projects" target="_blank" class="sb-link">
@@ -865,6 +876,11 @@
         <a href="/api/blogs" target="_blank" class="sb-link">
             <span class="sb-ico"><i class="fas fa-code"></i></span>
             <span><span class="sb-get">GET</span>/api/blogs</span>
+        </a>
+
+        <a href="/api/resume/active" target="_blank" class="sb-link">
+            <span class="sb-ico"><i class="fas fa-code"></i></span>
+            <span><span class="sb-get">GET</span>/api/resume/active</span>
         </a>
     </nav>
 

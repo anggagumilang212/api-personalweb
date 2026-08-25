@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\ResumeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,3 +45,8 @@ Route::get('/blogs/{id}', [BlogController::class, 'detail']);
 Route::post('/create-blogs', [BlogController::class, 'store']);
 Route::put('/update-blogs/{id}', [BlogController::class, 'update']);
 Route::delete('/delete-blogs/{id}', [BlogController::class, 'destroy']);
+
+// Resume / CV
+Route::get('/resume/active', [ResumeController::class, 'active']);
+Route::get('/resumes', [ResumeController::class, 'index']);
+

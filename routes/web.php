@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectViewController;
 use App\Http\Controllers\BlogViewController;
+use App\Http\Controllers\ResumeViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,11 @@ Route::get('/blogs', [BlogViewController::class, 'index'])->name('blogs.index');
 Route::post('/blogs', [BlogViewController::class, 'store'])->name('blogs.store');
 Route::post('/blogs/{id}', [BlogViewController::class, 'update'])->name('blogs.update');
 Route::delete('/blogs/{id}', [BlogViewController::class, 'destroy'])->name('blogs.destroy');
+
+// Resumes / CV
+Route::get('/resumes', [ResumeViewController::class, 'index'])->name('resumes.index');
+Route::post('/resumes', [ResumeViewController::class, 'store'])->name('resumes.store');
+Route::post('/resumes/{id}/set-active', [ResumeViewController::class, 'setActive'])->name('resumes.setActive');
+Route::delete('/resumes/{id}', [ResumeViewController::class, 'destroy'])->name('resumes.destroy');
+
 
