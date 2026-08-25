@@ -7,7 +7,8 @@
 <style>
     .page-header {
         display: flex; align-items: flex-start;
-        justify-content: space-between; margin-bottom: 36px;
+        justify-content: space-between; margin-bottom: 48px;
+        flex-wrap: wrap; gap: 24px;
     }
 
     .eyebrow {
@@ -151,7 +152,6 @@
         .card-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
         .card-footer > div { width: 100%; display: flex; gap: 8px; }
         .card-footer .btn-ghost { width: 100%; justify-content: center; }
-        .thumb-row { flex-direction: column; align-items: flex-start; }
         .drop-zone { padding: 18px 12px; }
     }
 </style>
@@ -165,7 +165,7 @@
         <h1>Projects</h1>
         <p>Kelola semua project portfolio kamu dari sini</p>
     </div>
-    <div style="display:flex;gap:10px;">
+    <div style="display:flex; gap: 10px; align-items: center;">
         <a href="/api/projects" target="_blank" class="btn btn-ghost btn-sm">
             <i class="fas fa-external-link-alt"></i> API
         </a>
@@ -186,72 +186,6 @@
     </div>
 </div>
 
-<!-- Create Form -->
-<div class="card anim anim-d1">
-    <div class="card-head">
-        <div class="card-title">
-            <span class="s-ico purple"><i class="fas fa-plus"></i></span>
-            Tambah Project Baru
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="toggleCreate('createBody','createChev')">
-            <i class="fas fa-chevron-up" id="createChev"></i>
-        </button>
-    </div>
-    <div class="card-body" id="createBody">
-        <form method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="form-grid">
-                <div class="fg">
-                    <label class="flabel">Judul Project <span class="req">*</span></label>
-                    <input type="text" name="judul" class="finput" placeholder="Masukkan judul..." required>
-                </div>
-                <div class="fg">
-                    <label class="flabel">URL Demo <span class="req">*</span></label>
-                    <input type="text" name="url" class="finput" placeholder="https://example.com" required>
-                </div>
-                <div class="fg full">
-                    <label class="flabel">Deskripsi <span class="req">*</span></label>
-                    <textarea name="deskripsi" class="ftextarea" placeholder="Jelaskan project kamu..." required></textarea>
-                </div>
-                <div class="fg">
-                    <label class="flabel">Foto Project <span class="req">*</span></label>
-                    <div class="drop-zone" id="mainDrop">
-                        <input type="file" name="foto" id="mainFoto" accept="image/*"
-                            onchange="previewImg(this,'mainPrev')">
-                        <div class="drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <div class="drop-text">Upload thumbnail project</div>
-                        <div class="drop-sub">JPEG, PNG, WebP, GIF</div>
-                        <img id="mainPrev" class="img-preview" alt="Preview">
-                    </div>
-                </div>
-                <div class="fg">
-                    <label class="flabel">Icon Tech Stack</label>
-                    <div class="drop-zone" id="techDrop">
-                        <input type="file" name="tech[]" id="mainTech" multiple accept="image/*"
-                            onchange="previewTech(this,'techPrev')">
-                        <div class="drop-icon" style="background:linear-gradient(135deg,var(--c-cyan-l),var(--c-purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <div class="drop-text">Upload icon tech stack</div>
-                        <div class="drop-sub">Multiple file diperbolehkan</div>
-                        <div id="techPrev" class="tech-strip" style="justify-content:center;margin-top:10px;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="hr"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;">
-                <button type="reset" class="btn btn-ghost btn-sm"
-                    onclick="document.getElementById('mainPrev').style.display='none';document.getElementById('techPrev').innerHTML=''">
-                    <i class="fas fa-rotate-left"></i> Reset
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk"></i> Simpan Project
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- Project List -->
 <div class="card anim anim-d2">
     <div class="card-head">
@@ -260,9 +194,14 @@
             Daftar Projects
             <span class="tag tag-cyan">{{ $projects->count() }} total</span>
         </div>
-        <div class="search-wrap">
-            <i class="fas fa-magnifying-glass search-ico"></i>
-            <input type="text" placeholder="Cari project..." oninput="filterCards(this.value,'project-card')">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div class="search-wrap">
+                <i class="fas fa-magnifying-glass search-ico"></i>
+                <input type="text" placeholder="Cari project..." oninput="filterCards(this.value,'project-card')">
+            </div>
+            <button class="btn btn-primary" onclick="openFormModal('create')">
+                <i class="fas fa-plus"></i> Tambah Project Baru
+            </button>
         </div>
     </div>
     <div class="card-body">
@@ -270,7 +209,7 @@
             <div class="empty">
                 <div class="empty-illus"><i class="fas fa-folder-open"></i></div>
                 <h3>Belum ada project</h3>
-                <p>Tambahkan project pertamamu menggunakan form di atas.</p>
+                <p>Tambahkan project pertamamu dengan menekan tombol Tambah Project Baru.</p>
             </div>
         @else
             <div class="project-grid">
@@ -304,7 +243,7 @@
                                 </a>
                                 <div style="display:flex;gap:6px;">
                                     <button type="button" class="btn btn-warn btn-sm btn-ico"
-                                        onclick="toggleEdit('pe-{{ $project->id }}','pc-{{ $project->id }}')" title="Edit">
+                                        onclick='openFormModal("edit", @json($project))' title="Edit">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm btn-ico"
@@ -312,64 +251,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Edit Slide -->
-                        <div class="edit-slide" id="pe-{{ $project->id }}">
-                            <div class="edit-body">
-                                <form method="POST" action="{{ route('projects.update', $project->id) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="edit-grid">
-                                        <div>
-                                            <span class="elabel">Judul *</span>
-                                            <input type="text" name="judul" class="einput" value="{{ $project->judul }}" required>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Deskripsi *</span>
-                                            <textarea name="deskripsi" class="etextarea" rows="2">{{ $project->deskripsi }}</textarea>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">URL *</span>
-                                            <input type="text" name="url" class="einput" value="{{ $project->url }}" required>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Ganti Foto</span>
-                                            <div class="thumb-row">
-                                                @if ($project->image_url)
-                                                    <img src="{{ $project->image_url }}" class="e-thumb" id="et-{{ $project->id }}" alt="thumb">
-                                                @endif
-                                                <label class="upload-btn-fake">
-                                                    <i class="fas fa-upload"></i> Ganti Foto
-                                                    <input type="file" name="foto" style="display:none" accept="image/*"
-                                                        onchange="updateThumb(this,'et-{{ $project->id }}')">
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Tech Stack (tambah)</span>
-                                            <div class="tech-strip" style="margin-bottom:8px;">
-                                                @foreach (json_decode($project->tech) ?? [] as $tech)
-                                                    <div class="tech-chip"><img src="{{ $tech }}" alt="tech"></div>
-                                                @endforeach
-                                            </div>
-                                            <label class="upload-btn-fake">
-                                                <i class="fas fa-code"></i> Tambah Icons
-                                                <input type="file" name="tech[]" multiple style="display:none" accept="image/*">
-                                            </label>
-                                            <input type="hidden" name="keep_tech" value="1">
-                                        </div>
-                                    </div>
-                                    <div class="hr" style="margin:12px 0;"></div>
-                                    <div style="display:flex;justify-content:flex-end;gap:8px;">
-                                        <button type="button" class="btn btn-ghost btn-sm"
-                                            onclick="toggleEdit('pe-{{ $project->id }}','pc-{{ $project->id }}')">
-                                            <i class="fas fa-xmark"></i> Batal
-                                        </button>
-                                        <button type="submit" class="btn btn-warn btn-sm">
-                                            <i class="fas fa-floppy-disk"></i> Update
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -382,6 +263,67 @@
 @endsection
 
 @section('modal')
+<!-- FORM MODAL (Create/Edit) -->
+<div class="overlay" id="formOverlay">
+    <div class="modal-box modal-box-lg">
+        <div class="modal-title" id="formModalTitle">Tambah Project Baru</div>
+        <div class="modal-desc" id="formModalDesc">Isi form di bawah ini untuk menambahkan project baru.</div>
+        
+        <form id="projectForm" method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="_method" id="formMethod" value="POST">
+            <input type="hidden" name="keep_tech" value="1">
+            
+            <div class="form-grid">
+                <div class="fg">
+                    <label class="flabel">Judul Project <span class="req">*</span></label>
+                    <input type="text" name="judul" id="inputJudul" class="finput" placeholder="Masukkan judul..." required>
+                </div>
+                <div class="fg">
+                    <label class="flabel">URL Demo <span class="req">*</span></label>
+                    <input type="text" name="url" id="inputUrl" class="finput" placeholder="https://example.com" required>
+                </div>
+                <div class="fg full">
+                    <label class="flabel">Deskripsi <span class="req">*</span></label>
+                    <textarea name="deskripsi" id="inputDeskripsi" class="ftextarea" placeholder="Jelaskan project kamu..." required></textarea>
+                </div>
+                <div class="fg">
+                    <label class="flabel">Foto Project</label>
+                    <div class="drop-zone" id="mainDrop">
+                        <input type="file" name="foto" id="mainFoto" accept="image/*" onchange="previewImg(this,'mainPrev')">
+                        <div class="drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="drop-text">Upload thumbnail project</div>
+                        <div class="drop-sub">JPEG, PNG, WebP, GIF</div>
+                        <img id="mainPrev" class="img-preview" alt="Preview">
+                    </div>
+                </div>
+                <div class="fg">
+                    <label class="flabel">Icon Tech Stack</label>
+                    <div class="drop-zone" id="techDrop">
+                        <input type="file" name="tech[]" id="mainTech" multiple accept="image/*" onchange="previewTech(this,'techPrev')">
+                        <div class="drop-icon" style="background:linear-gradient(135deg,var(--c-cyan-l),var(--c-purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="drop-text">Upload icon tech stack</div>
+                        <div class="drop-sub">Multiple file diperbolehkan</div>
+                        <div id="techPrev" class="tech-strip" style="justify-content:center;margin-top:10px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hr" style="margin:24px 0 16px;"></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;">
+                <button type="button" class="btn btn-ghost" onclick="closeFormModal()">
+                    <i class="fas fa-xmark"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnSubmitForm">
+                    <i class="fas fa-floppy-disk"></i> Simpan Project
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
 <div class="overlay" id="delOverlay">
     <div class="modal-box">
         <div class="modal-icon"><i class="fas fa-triangle-exclamation"></i></div>
@@ -417,5 +359,73 @@
             c.appendChild(chip);
         });
     }
+
+    function openFormModal(mode, data = null) {
+        const form = document.getElementById('projectForm');
+        const title = document.getElementById('formModalTitle');
+        const desc = document.getElementById('formModalDesc');
+        const method = document.getElementById('formMethod');
+        const btnSubmit = document.getElementById('btnSubmitForm');
+        
+        // Reset previews
+        document.getElementById('mainPrev').style.display = 'none';
+        document.getElementById('mainPrev').src = '';
+        document.getElementById('techPrev').innerHTML = '';
+        
+        if (mode === 'create') {
+            form.reset();
+            title.innerHTML = 'Tambah Project Baru';
+            desc.innerHTML = 'Isi form di bawah ini untuk menambahkan project baru.';
+            method.value = 'POST';
+            form.action = "{{ route('projects.store') }}";
+            btnSubmit.innerHTML = '<i class="fas fa-floppy-disk"></i> Simpan Project';
+        } else if (mode === 'edit' && data) {
+            form.reset();
+            title.innerHTML = 'Edit Project';
+            desc.innerHTML = 'Perbarui data project kamu.';
+            method.value = 'PUT';
+            form.action = `/projects/${data.id}`;
+            btnSubmit.innerHTML = '<i class="fas fa-floppy-disk"></i> Update Project';
+            
+            // Populate fields
+            document.getElementById('inputJudul').value = data.judul;
+            document.getElementById('inputUrl').value = data.url;
+            document.getElementById('inputDeskripsi').value = data.deskripsi;
+            
+            // Previews
+            if (data.image_url) {
+                document.getElementById('mainPrev').src = data.image_url;
+                document.getElementById('mainPrev').style.display = 'block';
+            }
+            if (data.tech && data.tech !== 'null') {
+                const techs = typeof data.tech === 'string' ? JSON.parse(data.tech) : data.tech;
+                const techContainer = document.getElementById('techPrev');
+                if (Array.isArray(techs)) {
+                    techs.forEach(t => {
+                        const chip = document.createElement('div');
+                        chip.className = 'tech-chip';
+                        chip.innerHTML = `<img src="${t}" alt="tech">`;
+                        techContainer.appendChild(chip);
+                    });
+                }
+            }
+        }
+        
+        document.getElementById('formOverlay').classList.add('open');
+    }
+
+    function closeFormModal() {
+        document.getElementById('formOverlay').classList.remove('open');
+    }
+
+    // Close form modal when clicking outside
+    document.addEventListener('DOMContentLoaded', () => {
+        const formOverlay = document.getElementById('formOverlay');
+        if (formOverlay) {
+            formOverlay.addEventListener('click', e => { 
+                if (e.target === formOverlay) closeFormModal(); 
+            });
+        }
+    });
 </script>
 @endsection

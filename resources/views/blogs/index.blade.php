@@ -8,8 +8,8 @@
     /* ── PAGE HEADER ── */
     .page-header {
         display: flex; align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 36px;
+        justify-content: space-between; margin-bottom: 48px;
+        flex-wrap: wrap; gap: 24px;
     }
 
     .eyebrow {
@@ -177,7 +177,6 @@
         .page-header h1 { font-size: 1.4rem; }
         .card-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
         .card-footer > div { width: 100%; display: flex; gap: 8px; }
-        .thumb-row { flex-direction: column; align-items: flex-start; }
         .drop-zone { padding: 18px 12px; }
     }
 </style>
@@ -192,7 +191,7 @@
         <h1>Blog Posts</h1>
         <p>Tulis, kelola, dan publish artikel dari sini</p>
     </div>
-    <div style="display:flex;gap:10px;align-items:center;">
+    <div style="display:flex; gap: 10px; align-items: center;">
         <a href="/api/blogs" target="_blank" class="btn btn-ghost btn-sm">
             <i class="fas fa-external-link-alt"></i> API
         </a>
@@ -218,63 +217,6 @@
     </div>
 </div>
 
-<!-- Create Form -->
-<div class="card anim anim-d1">
-    <div class="card-head">
-        <div class="card-title">
-            <span class="s-ico purple"><i class="fas fa-plus"></i></span>
-            Tambah Blog Baru
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="toggleCreate('createBody','createChev')">
-            <i class="fas fa-chevron-up" id="createChev"></i>
-        </button>
-    </div>
-    <div class="card-body" id="createBody">
-        <form method="POST" action="{{ route('blogs.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="form-grid">
-                <div class="fg">
-                    <label class="flabel">Judul Artikel <span class="req">*</span></label>
-                    <input type="text" name="title" class="finput" placeholder="Masukkan judul..." required>
-                </div>
-                <div class="fg">
-                    <label class="flabel">Tanggal Publish</label>
-                    <input type="datetime-local" name="published_at" class="finput">
-                </div>
-                <div class="fg full">
-                    <label class="flabel">Deskripsi Singkat</label>
-                    <textarea name="description" class="ftextarea" placeholder="Ringkasan singkat artikel..."></textarea>
-                </div>
-                <div class="fg full">
-                    <label class="flabel">Body Markdown</label>
-                    <textarea name="body_markdown" class="ftextarea fmono" style="min-height:130px;"
-                        placeholder="# Judul&#10;&#10;## Heading 2&#10;&#10;Tulis konten di sini..."></textarea>
-                </div>
-                <div class="fg full">
-                    <label class="flabel">Cover Image</label>
-                    <div class="drop-zone" id="mainDrop">
-                        <input type="file" name="cover_image" id="mainFile" accept="image/*"
-                            onchange="previewImg(this,'mainPrev')">
-                        <div class="drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <div class="drop-text">Klik atau drag &amp; drop gambar</div>
-                        <div class="drop-sub">JPEG, PNG, WebP · maks. 4MB</div>
-                        <img id="mainPrev" class="img-preview" alt="Preview">
-                    </div>
-                </div>
-            </div>
-            <div class="hr"></div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;">
-                <button type="reset" class="btn btn-ghost btn-sm" onclick="document.getElementById('mainPrev').style.display='none'">
-                    <i class="fas fa-rotate-left"></i> Reset
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk"></i> Simpan Artikel
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- Blog List -->
 <div class="card anim anim-d2">
     <div class="card-head">
@@ -283,9 +225,14 @@
             Daftar Artikel
             <span class="tag tag-purple">{{ $blogs->count() }} total</span>
         </div>
-        <div class="search-wrap">
-            <i class="fas fa-magnifying-glass search-ico"></i>
-            <input type="text" placeholder="Cari artikel..." oninput="filterCards(this.value,'blog-card')">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div class="search-wrap">
+                <i class="fas fa-magnifying-glass search-ico"></i>
+                <input type="text" placeholder="Cari artikel..." oninput="filterCards(this.value,'blog-card')">
+            </div>
+            <button class="btn btn-primary" onclick="openFormModal('create')">
+                <i class="fas fa-plus"></i> Tambah Blog Baru
+            </button>
         </div>
     </div>
     <div class="card-body">
@@ -293,7 +240,7 @@
             <div class="empty">
                 <div class="empty-illus"><i class="fas fa-newspaper"></i></div>
                 <h3>Belum ada artikel</h3>
-                <p>Mulai tulis artikel pertamamu menggunakan form di atas.</p>
+                <p>Mulai tulis artikel pertamamu dengan menekan tombol Tambah Blog Baru.</p>
             </div>
         @else
             <div class="blog-grid">
@@ -332,7 +279,7 @@
                                 <span class="card-slug">/{{ $blog->slug }}</span>
                                 <div style="display:flex;gap:6px;">
                                     <button type="button" class="btn btn-warn btn-sm btn-ico"
-                                        onclick="toggleEdit('be-{{ $blog->id }}','bc-{{ $blog->id }}')" title="Edit">
+                                        onclick='openFormModal("edit", @json($blog))' title="Edit">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm btn-ico"
@@ -340,62 +287,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Edit Slide -->
-                        <div class="edit-slide" id="be-{{ $blog->id }}">
-                            <div class="edit-body">
-                                <form method="POST" action="{{ route('blogs.update', $blog->id) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="edit-grid">
-                                        <div>
-                                            <span class="elabel">Judul *</span>
-                                            <input type="text" name="title" class="einput" value="{{ $blog->title }}" required>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Deskripsi</span>
-                                            <textarea name="description" class="etextarea" rows="2">{{ $blog->description }}</textarea>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Body Markdown</span>
-                                            <textarea name="body_markdown" class="etextarea fmono" rows="3">{{ $blog->body_markdown }}</textarea>
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Tanggal Publish</span>
-                                            <input type="datetime-local" name="published_at" class="einput"
-                                                value="{{ $blog->published_at ? \Carbon\Carbon::parse($blog->published_at)->format('Y-m-d\TH:i') : '' }}">
-                                        </div>
-                                        <div>
-                                            <span class="elabel">Cover Image</span>
-                                            <div class="thumb-row">
-                                                @if ($blog->cover_image)
-                                                    <img src="{{ asset('cover_images/'.$blog->cover_image) }}"
-                                                        class="e-thumb" id="et-{{ $blog->id }}" alt="thumb">
-                                                @else
-                                                    <div class="e-thumb" id="et-{{ $blog->id }}"
-                                                        style="background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:var(--c-txt-3);">
-                                                        <i class="fas fa-image"></i>
-                                                    </div>
-                                                @endif
-                                                <label class="upload-btn-fake">
-                                                    <i class="fas fa-upload"></i> Ganti Gambar
-                                                    <input type="file" name="cover_image" style="display:none" accept="image/*"
-                                                        onchange="updateThumb(this,'et-{{ $blog->id }}')">
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="hr" style="margin:12px 0;"></div>
-                                    <div style="display:flex;justify-content:flex-end;gap:8px;">
-                                        <button type="button" class="btn btn-ghost btn-sm"
-                                            onclick="toggleEdit('be-{{ $blog->id }}','bc-{{ $blog->id }}')">
-                                            <i class="fas fa-xmark"></i> Batal
-                                        </button>
-                                        <button type="submit" class="btn btn-warn btn-sm">
-                                            <i class="fas fa-floppy-disk"></i> Update
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -408,6 +299,61 @@
 @endsection
 
 @section('modal')
+
+<!-- FORM MODAL (Create/Edit) -->
+<div class="overlay" id="formOverlay">
+    <div class="modal-box modal-box-lg">
+        <div class="modal-title" id="formModalTitle">Tambah Blog Baru</div>
+        <div class="modal-desc" id="formModalDesc">Isi form di bawah ini untuk menambahkan artikel blog.</div>
+        
+        <form id="blogForm" method="POST" action="{{ route('blogs.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="_method" id="formMethod" value="POST">
+            
+            <div class="form-grid">
+                <div class="fg">
+                    <label class="flabel">Judul Artikel <span class="req">*</span></label>
+                    <input type="text" name="title" id="inputTitle" class="finput" placeholder="Masukkan judul..." required>
+                </div>
+                <div class="fg">
+                    <label class="flabel">Tanggal Publish</label>
+                    <input type="datetime-local" name="published_at" id="inputPublishedAt" class="finput">
+                </div>
+                <div class="fg full">
+                    <label class="flabel">Deskripsi Singkat</label>
+                    <textarea name="description" id="inputDescription" class="ftextarea" placeholder="Ringkasan singkat artikel..."></textarea>
+                </div>
+                <div class="fg full">
+                    <label class="flabel">Body Markdown</label>
+                    <textarea name="body_markdown" id="inputBodyMarkdown" class="ftextarea fmono" style="min-height:130px;"
+                        placeholder="# Judul&#10;&#10;## Heading 2&#10;&#10;Tulis konten di sini..."></textarea>
+                </div>
+                <div class="fg full">
+                    <label class="flabel">Cover Image</label>
+                    <div class="drop-zone" id="mainDrop">
+                        <input type="file" name="cover_image" id="mainFile" accept="image/*"
+                            onchange="previewImg(this,'mainPrev')">
+                        <div class="drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="drop-text">Klik atau drag &amp; drop gambar</div>
+                        <div class="drop-sub">JPEG, PNG, WebP · maks. 4MB</div>
+                        <img id="mainPrev" class="img-preview" alt="Preview">
+                    </div>
+                </div>
+            </div>
+            <div class="hr" style="margin:24px 0 16px;"></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;">
+                <button type="button" class="btn btn-ghost" onclick="closeFormModal()">
+                    <i class="fas fa-xmark"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnSubmitForm">
+                    <i class="fas fa-floppy-disk"></i> Simpan Artikel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
 <div class="overlay" id="delOverlay">
     <div class="modal-box">
         <div class="modal-icon"><i class="fas fa-triangle-exclamation"></i></div>
@@ -447,5 +393,69 @@
             }
         });
     })();
+
+    function openFormModal(mode, data = null) {
+        const form = document.getElementById('blogForm');
+        const title = document.getElementById('formModalTitle');
+        const desc = document.getElementById('formModalDesc');
+        const method = document.getElementById('formMethod');
+        const btnSubmit = document.getElementById('btnSubmitForm');
+        
+        // Reset previews
+        document.getElementById('mainPrev').style.display = 'none';
+        document.getElementById('mainPrev').src = '';
+        
+        if (mode === 'create') {
+            form.reset();
+            title.innerHTML = 'Tambah Blog Baru';
+            desc.innerHTML = 'Isi form di bawah ini untuk menambahkan artikel blog.';
+            method.value = 'POST';
+            form.action = "{{ route('blogs.store') }}";
+            btnSubmit.innerHTML = '<i class="fas fa-floppy-disk"></i> Simpan Artikel';
+        } else if (mode === 'edit' && data) {
+            form.reset();
+            title.innerHTML = 'Edit Blog';
+            desc.innerHTML = 'Perbarui artikel blog kamu.';
+            method.value = 'PUT';
+            form.action = `/blogs/${data.id}`;
+            btnSubmit.innerHTML = '<i class="fas fa-floppy-disk"></i> Update Artikel';
+            
+            // Populate fields
+            document.getElementById('inputTitle').value = data.title;
+            document.getElementById('inputDescription').value = data.description || '';
+            document.getElementById('inputBodyMarkdown').value = data.body_markdown || '';
+            
+            if (data.published_at) {
+                // Konversi tanggal ke format yang diterima input datetime-local (YYYY-MM-DDTHH:mm)
+                const date = new Date(data.published_at);
+                const isoString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
+                document.getElementById('inputPublishedAt').value = isoString;
+            } else {
+                document.getElementById('inputPublishedAt').value = '';
+            }
+            
+            // Previews
+            if (data.cover_image) {
+                document.getElementById('mainPrev').src = `/cover_images/${data.cover_image}`;
+                document.getElementById('mainPrev').style.display = 'block';
+            }
+        }
+        
+        document.getElementById('formOverlay').classList.add('open');
+    }
+
+    function closeFormModal() {
+        document.getElementById('formOverlay').classList.remove('open');
+    }
+
+    // Close form modal when clicking outside
+    document.addEventListener('DOMContentLoaded', () => {
+        const formOverlay = document.getElementById('formOverlay');
+        if (formOverlay) {
+            formOverlay.addEventListener('click', e => { 
+                if (e.target === formOverlay) closeFormModal(); 
+            });
+        }
+    });
 </script>
 @endsection

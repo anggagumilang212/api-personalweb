@@ -561,6 +561,13 @@
             width: 90%; max-width: 420px;
             box-shadow: 0 32px 100px rgba(0,0,0,.7);
             animation: popIn .25s cubic-bezier(.34,1.56,.64,1) both;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-box-lg {
+            max-width: 800px;
+            padding: 36px;
         }
 
         @keyframes popIn {
