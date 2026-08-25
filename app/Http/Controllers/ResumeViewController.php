@@ -27,7 +27,14 @@ class ResumeViewController extends Controller
         // Save file
         $file     = $request->file('cv_file');
         $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('resumes/'), $fileName);
+
+        // Create directory if it doesn't exist
+        $uploadDir = public_path('resumes/');
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $file->move($uploadDir, $fileName);
 
         $fileUrl  = url('resumes/' . $fileName);
 
