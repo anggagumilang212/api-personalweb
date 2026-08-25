@@ -29,14 +29,14 @@ class ResumeViewController extends Controller
         $fileName = time() . '_' . $file->getClientOriginalName();
 
         // Create directory if it doesn't exist
-        $uploadDir = public_path('resumes/');
+        $uploadDir = public_path('cv_uploads/');
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
         $file->move($uploadDir, $fileName);
 
-        $fileUrl  = url('resumes/' . $fileName);
+        $fileUrl  = url('cv_uploads/' . $fileName);
 
         // Deactivate all existing resumes
         Resume::query()->update(['is_active' => false]);
@@ -44,7 +44,7 @@ class ResumeViewController extends Controller
         // Create new active resume
         Resume::create([
             'file_name' => $file->getClientOriginalName(),
-            'file_path' => 'resumes/' . $fileName,
+            'file_path' => 'cv_uploads/' . $fileName,
             'file_url'  => $fileUrl,
             'is_active' => true,
         ]);
@@ -66,7 +66,7 @@ class ResumeViewController extends Controller
 
     public function show($filename)
     {
-        $path = public_path('resumes/' . $filename);
+        $path = public_path('cv_uploads/' . $filename);
         if (!file_exists($path)) {
             abort(404);
         }
