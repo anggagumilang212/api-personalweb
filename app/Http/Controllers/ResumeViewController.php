@@ -64,6 +64,15 @@ class ResumeViewController extends Controller
         return redirect()->route('resumes.index')->with('success', 'CV "' . $resume->file_name . '" sekarang aktif!');
     }
 
+    public function show($filename)
+    {
+        $path = public_path('resumes/' . $filename);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path);
+    }
+
     public function destroy($id)
     {
         $resume = Resume::findOrFail($id);
